@@ -40,6 +40,10 @@ void setup()
  SPI.begin();
 
  MIDI.begin(MIDI_CHANNEL_OMNI);
+
+ // Set initial pitch bend voltage to 0.5V (mid point).  With Gain = 1X, this is 1023
+ // Other DAC outputs will come up as 0V, so don't need to be initialized
+ setVoltage(DAC2, 0, 0, 1023);  
 }
 
 
@@ -61,7 +65,7 @@ void loop()
     clock_timer = 0;  
   }
   
-  if (MIDI.read()) {                    // Is there a MIDI message incoming ?
+  if (MIDI.read()) {                    
     byte type = MIDI.getType();
     switch (type) {
       case midi::NoteOn: 
