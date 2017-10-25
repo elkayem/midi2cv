@@ -99,8 +99,7 @@ void loop()
         d2 = MIDI.getData2(); // d2 from 0 to 127, mid point = 64
 
         // Pitch bend output from 0 to 1023 mV.  Left shift d2 by 4 to scale from 0 to 2047.
-        // With DAC gain = 1X, this will yield a range from 0 to 1023 mV.  Additional amplification
-        // after DAC will rescale to -1 to +1V.
+        // With DAC gain = 1X, this will yield a range from 0 to 1023 mV.  
         setVoltage(DAC2, 0, 0, d2<<4);  // DAC2, channel 0, gain = 1X
         
         break;
