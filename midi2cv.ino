@@ -69,10 +69,13 @@ void loop()
     byte type = MIDI.getType();
     switch (type) {
       case midi::NoteOn: 
-        note = MIDI.getData1(); // A0 = note 21, Top Note = 108
+        note = MIDI.getData1() - 21; // A0 = 21, Top Note = 108
         velocity = MIDI.getData2(); // Velocity from 0 to 127
         channel = MIDI.getChannel();
-        notes[note-21] = true;
+        
+        if ((note < 0) || (note > 87)) break;
+        
+        notes[note] = true;
         commandTopNote();
         
         // velocity range from 0 to 4095 mV  Left shift d2 by 5 to scale from 0 to 4095, 
@@ -86,10 +89,13 @@ void loop()
         break;
         
       case midi::NoteOff:
-        note = MIDI.getData1();
+        note = MIDI.getData1() - 21; // A0 = 21, Top Note = 108
         velocity = MIDI.getData2();
         channel = MIDI.getChannel();
-        notes[note-21] = false;
+
+        if ((note < 0) || (note > 87)) break;
+        
+        notes[note] = false;
         commandTopNote();
         
         break;
