@@ -47,13 +47,13 @@ void setup()
 }
 
 
-unsigned long trig_timer=0, t=0, clock_timer=0;
-unsigned int clock_count=0;
 bool notes[88]; 
 
 void loop()
 {
   int type, note, velocity, channel, d1, d2;
+  static unsigned long trig_timer=0, clock_timer=0, clock_timeout=0;
+  static unsigned int clock_count=0;
 
   if ((trig_timer > 0) && (millis() - trig_timer > 20)) { 
     digitalWrite(TRIG,LOW); // Set trigger low after 20 msec 
@@ -120,25 +120,26 @@ void loop()
         break;
         
       case midi::Clock:
+        if (millis() > clock_timeout + 300) clock_count = 0; // Prevents Clock from starting in between quarter notes after clock is restarted!
+        clock_timeout = millis();
+        
         if (clock_count == 0) {
-        // Start clock pulse
-        digitalWrite(CLOCK,HIGH);
-        clock_timer=millis();    
+          digitalWrite(CLOCK,HIGH); // Start clock pulse
+          clock_timer=millis();    
         }
         clock_count++;
         if (clock_count == 24) {  // MIDI timing clock sends 24 pulses per quarter note.  Sent pulse only once every 24 pulses
           clock_count = 0;  
         }
+        break;
+        
       case midi::ActiveSensing: 
         break;
+        
       default:
         d1 = MIDI.getData1();
         d2 = MIDI.getData2();
     }
-    t = millis();
-  }
-  if (millis() - t > 10000) {
-    t += 10000;
   }
 }
 
